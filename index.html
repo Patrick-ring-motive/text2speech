@@ -1,424 +1,662 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>speechSynthesis test bench</title>
-<style>
-  :root {
-    --bg: #f6f7f9; --panel: #ffffff; --ink: #14181f; --muted: #5b6573;
-    --line: #d5dae1; --accent: #0b6bcb; --accent-ink: #ffffff;
-    --ok: #127a3b; --warn: #a15c00; --bad: #b3261e; --mark: #ffe58a;
-    color-scheme: light dark;
-  }
-  @media (prefers-color-scheme: dark) {
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>speechSynthesis test bench</title>
+  <style>
     :root {
-      --bg: #101319; --panel: #181c24; --ink: #e6e9ee; --muted: #98a2b1;
-      --line: #2b323d; --accent: #5aa5f5; --accent-ink: #07101c;
-      --ok: #52c47e; --warn: #e0a64a; --bad: #f07a72; --mark: #5c4a00;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --ink: #14181f;
+      --muted: #5b6573;
+      --line: #d5dae1;
+      --accent: #0b6bcb;
+      --accent-ink: #ffffff;
+      --ok: #127a3b;
+      --warn: #a15c00;
+      --bad: #b3261e;
+      --mark: #ffe58a;
+      color-scheme: light dark;
     }
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
-  }
-  main { max-width: 980px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
-  h1 { font-size: 20px; margin: 0; }
-  h2 { font-size: 15px; margin: 0 0 10px; }
-  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
-  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-  label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
-  label b { color: var(--ink); font-weight: 600; }
-  textarea, input[type=text], select {
-    width: 100%; font: inherit; color: var(--ink); background: var(--bg);
-    border: 1px solid var(--line); border-radius: 6px; padding: 8px;
-  }
-  textarea { min-height: 110px; resize: vertical; }
-  input[type=range] { width: 100%; }
-  button {
-    font: inherit; padding: 8px 12px; border-radius: 6px; cursor: pointer;
-    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
-  }
-  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  button:hover { filter: brightness(1.08); }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .pill { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
-  .pill.on { color: var(--ok); border-color: var(--ok); }
-  .pill.paused { color: var(--warn); border-color: var(--warn); }
-  #support.bad { color: var(--bad); }
-  #follow { white-space: pre-wrap; padding: 8px; border: 1px dashed var(--line); border-radius: 6px; min-height: 44px; }
-  #follow mark { background: var(--mark); color: inherit; border-radius: 2px; }
-  #log {
-    font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    height: 260px; overflow: auto; background: var(--bg);
-    border: 1px solid var(--line); border-radius: 6px; padding: 8px; white-space: pre-wrap;
-  }
-  #log .err { color: var(--bad); }
-  #log .evt { color: var(--accent); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--panel); }
-  tr.sel td { background: color-mix(in srgb, var(--accent) 16%, transparent); }
-  .tablewrap { max-height: 300px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; }
-  .tablewrap button { padding: 2px 8px; font-size: 12px; }
-  dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; font-size: 13px; }
-  dt { color: var(--muted); }
-  dd { margin: 0; word-break: break-all; }
-</style>
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101319;
+        --panel: #181c24;
+        --ink: #e6e9ee;
+        --muted: #98a2b1;
+        --line: #2b323d;
+        --accent: #5aa5f5;
+        --accent-ink: #07101c;
+        --ok: #52c47e;
+        --warn: #e0a64a;
+        --bad: #f07a72;
+        --mark: #5c4a00;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 15px;
+      margin: 0 0 10px;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    label {
+      display: grid;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    label b {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    textarea,
+    input[type=text],
+    select {
+      width: 100%;
+      font: inherit;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    input[type=range] {
+      width: 100%;
+    }
+
+    button {
+      font: inherit;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .pill {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .pill.on {
+      color: var(--ok);
+      border-color: var(--ok);
+    }
+
+    .pill.paused {
+      color: var(--warn);
+      border-color: var(--warn);
+    }
+
+    #support.bad {
+      color: var(--bad);
+    }
+
+    #follow {
+      white-space: pre-wrap;
+      padding: 8px;
+      border: 1px dashed var(--line);
+      border-radius: 6px;
+      min-height: 44px;
+    }
+
+    #follow mark {
+      background: var(--mark);
+      color: inherit;
+      border-radius: 2px;
+    }
+
+    #log {
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      height: 260px;
+      overflow: auto;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+      white-space: pre-wrap;
+    }
+
+    #log .err {
+      color: var(--bad);
+    }
+
+    #log .evt {
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 5px 6px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      background: var(--panel);
+    }
+
+    tr.sel td {
+      background: color-mix(in srgb, var(--accent) 16%, transparent);
+    }
+
+    .tablewrap {
+      max-height: 300px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .tablewrap button {
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+
+    dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 2px 12px;
+      font-size: 13px;
+    }
+
+    dt {
+      color: var(--muted);
+    }
+
+    dd {
+      margin: 0;
+      word-break: break-all;
+    }
+
+  </style>
 </head>
+
 <body>
-<main>
-  <header class="row" style="justify-content: space-between">
-    <h1>speechSynthesis test bench</h1>
-    <span id="support" class="pill"></span>
-  </header>
+  <main>
+    <header class="row" style="justify-content: space-between">
+      <h1>speechSynthesis test bench</h1>
+      <span id="support" class="pill"></span>
+    </header>
 
-  <section>
-    <h2>Text</h2>
-    <label>
-      <span>Utterance text</span>
-      <textarea id="text">The quick brown fox jumps over the lazy dog. Numbers: 1, 2, 3, 3.14159. Date: 2026-11-07. Pause here, then continue after a comma, and finish with a question? Yes!</textarea>
-    </label>
-    <div class="row" style="margin-top:8px">
-      <button data-preset="en">English</button>
-      <button data-preset="es">Español</button>
-      <button data-preset="fr">Français</button>
-      <button data-preset="de">Deutsch</button>
-      <button data-preset="ja">日本語</button>
-      <button data-preset="zh">中文</button>
-      <button data-preset="long">Long (pause/resume test)</button>
-    </div>
-  </section>
-
-  <section>
-    <h2>SpeechSynthesisUtterance properties</h2>
-    <div class="grid">
+    <section>
+      <h2>Text</h2>
       <label>
-        <span>voice (filter, then pick)</span>
-        <input type="text" id="filter" placeholder="filter by name or lang">
-        <select id="voice"></select>
+        <span>Utterance text</span>
+        <textarea id="text">The quick brown fox jumps over the lazy dog. Numbers: 1, 2, 3, 3.14159. Date: 2026-11-07. Pause here, then continue after a comma, and finish with a question? Yes!</textarea>
       </label>
-      <label>
-        <span>lang override (blank = voice's lang)</span>
-        <input type="text" id="lang" placeholder="e.g. en-GB">
-      </label>
-      <label>
-        <span>rate: <b id="rateOut">1</b> (0.1 to 10)</span>
-        <input type="range" id="rate" min="0.1" max="10" step="0.1" value="1">
-      </label>
-      <label>
-        <span>pitch: <b id="pitchOut">1</b> (0 to 2)</span>
-        <input type="range" id="pitch" min="0" max="2" step="0.1" value="1">
-      </label>
-      <label>
-        <span>volume: <b id="volumeOut">1</b> (0 to 1)</span>
-        <input type="range" id="volume" min="0" max="1" step="0.05" value="1">
-      </label>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button class="primary" id="speak">speak() (cancel first)</button>
-      <button id="queue">speak() (queue)</button>
-      <button id="pause">pause()</button>
-      <button id="resume">resume()</button>
-      <button id="cancel">cancel()</button>
-      <button id="allVoices">Speak with every voice</button>
-      <button id="langVoices">Every voice in selected lang</button>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <span class="pill" id="sSpeaking">speaking: false</span>
-      <span class="pill" id="sPending">pending: false</span>
-      <span class="pill" id="sPaused">paused: false</span>
-    </div>
-  </section>
+      <div class="row" style="margin-top:8px">
+        <button data-preset="en">English</button>
+        <button data-preset="es">Español</button>
+        <button data-preset="fr">Français</button>
+        <button data-preset="de">Deutsch</button>
+        <button data-preset="ja">日本語</button>
+        <button data-preset="zh">中文</button>
+        <button data-preset="long">Long (pause/resume test)</button>
+      </div>
+    </section>
 
-  <section>
-    <h2>Boundary follow</h2>
-    <div id="follow" aria-live="off">Word and sentence boundaries highlight here while speaking, if the voice fires boundary events.</div>
-  </section>
+    <section>
+      <h2>SpeechSynthesisUtterance properties</h2>
+      <div class="grid">
+        <label>
+          <span>voice (filter, then pick)</span>
+          <input type="text" id="filter" placeholder="filter by name or lang">
+          <select id="voice"></select>
+        </label>
+        <label>
+          <span>lang override (blank = voice's lang)</span>
+          <input type="text" id="lang" placeholder="e.g. en-GB">
+        </label>
+        <label>
+          <span>rate: <b id="rateOut">1</b> (0.1 to 10)</span>
+          <input type="range" id="rate" min="0.1" max="10" step="0.1" value="1">
+        </label>
+        <label>
+          <span>pitch: <b id="pitchOut">1</b> (0 to 2)</span>
+          <input type="range" id="pitch" min="0" max="2" step="0.1" value="1">
+        </label>
+        <label>
+          <span>volume: <b id="volumeOut">1</b> (0 to 1)</span>
+          <input type="range" id="volume" min="0" max="1" step="0.05" value="1">
+        </label>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="speak">speak() (cancel first)</button>
+        <button id="queue">speak() (queue)</button>
+        <button id="pause">pause()</button>
+        <button id="resume">resume()</button>
+        <button id="cancel">cancel()</button>
+        <button id="allVoices">Speak with every voice</button>
+        <button id="langVoices">Every voice in selected lang</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <span class="pill" id="sSpeaking">speaking: false</span>
+        <span class="pill" id="sPending">pending: false</span>
+        <span class="pill" id="sPaused">paused: false</span>
+      </div>
+    </section>
 
-  <section>
-    <h2>Selected voice</h2>
-    <dl id="voiceInfo"></dl>
-  </section>
+    <section>
+      <h2>Boundary follow</h2>
+      <div id="follow" aria-live="off">Word and sentence boundaries highlight here while speaking, if the voice fires boundary events.</div>
+    </section>
 
-  <section>
-    <h2>Voices (<span id="count">0</span>)</h2>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Name</th><th>lang</th><th>local</th><th>default</th><th></th></tr></thead>
-        <tbody id="voiceRows"></tbody>
-      </table>
-    </div>
-  </section>
+    <section>
+      <h2>Selected voice</h2>
+      <dl id="voiceInfo"></dl>
+    </section>
 
-  <section>
-    <h2>Event log</h2>
-    <div class="row" style="margin-bottom:8px">
-      <label class="row" style="gap:6px"><input type="checkbox" id="logBoundary" checked> log boundary events</label>
-      <button id="copyLog">Copy log</button>
-      <button id="clearLog">Clear log</button>
-    </div>
-    <div id="log" role="log"></div>
-  </section>
-</main>
+    <section>
+      <h2>Voices (<span id="count">0</span>)</h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>lang</th>
+              <th>local</th>
+              <th>default</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="voiceRows"></tbody>
+        </table>
+      </div>
+    </section>
 
-<script>
-(() => {
-  const $ = id => document.getElementById(id);
-  const synth = window.speechSynthesis;
-  const logEl = $('log');
-  let voices = [];
-  let t0 = performance.now();
-  let sequenceId = 0;
+    <section>
+      <h2>Event log</h2>
+      <div class="row" style="margin-bottom:8px">
+        <label class="row" style="gap:6px"><input type="checkbox" id="logBoundary" checked> log boundary events</label>
+        <button id="copyLog">Copy log</button>
+        <button id="clearLog">Clear log</button>
+      </div>
+      <div id="log" role="log"></div>
+    </section>
+  </main>
 
-  const presets = {
-    en: 'The quick brown fox jumps over the lazy dog.',
-    es: 'El veloz murciélago hindú comía feliz cardillo y kiwi.',
-    fr: 'Portez ce vieux whisky au juge blond qui fume.',
-    de: 'Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich.',
-    ja: 'いろはにほへと ちりぬるを。こんにちは、世界。',
-    zh: '你好，世界。今天天气很好。',
-    long: Array.from({length: 12}, (_, i) => `Sentence number ${i + 1} of a deliberately long passage for testing pause and resume behaviour.`).join(' ')
-  };
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      const synth = window.speechSynthesis;
+      const logEl = $('log');
+      let voices = [];
+      let t0 = performance.now();
+      let sequenceId = 0;
 
-  // ---- support ----
-  const sup = $('support');
-  if (!synth || !('SpeechSynthesisUtterance' in window)) {
-    sup.textContent = 'speechSynthesis not supported';
-    sup.classList.add('bad');
-    log('speechSynthesis or SpeechSynthesisUtterance is missing in this browser.', 'err');
-    return;
-  }
-  sup.textContent = 'speechSynthesis supported';
+      const presets = {
+        en: 'The quick brown fox jumps over the lazy dog.',
+        es: 'El veloz murciélago hindú comía feliz cardillo y kiwi.',
+        fr: 'Portez ce vieux whisky au juge blond qui fume.',
+        de: 'Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich.',
+        ja: 'いろはにほへと ちりぬるを。こんにちは、世界。',
+        zh: '你好，世界。今天天气很好。',
+        long: Array.from({
+          length: 12
+        }, (_, i) => `Sentence number ${i + 1} of a deliberately long passage for testing pause and resume behaviour.`).join(' ')
+      };
 
-  // ---- logging ----
-  function log(msg, cls) {
-    const line = document.createElement('div');
-    if (cls) line.className = cls;
-    const t = ((performance.now() - t0) / 1000).toFixed(3).padStart(8);
-    line.textContent = `[${t}s] ${msg}`;
-    logEl.appendChild(line);
-    logEl.scrollTop = logEl.scrollHeight;
-  }
+      // ---- support ----
+      const sup = $('support');
+      if (!synth || !('SpeechSynthesisUtterance' in window)) {
+        sup.textContent = 'speechSynthesis not supported';
+        sup.classList.add('bad');
+        log('speechSynthesis or SpeechSynthesisUtterance is missing in this browser.', 'err');
+        return;
+      }
+      sup.textContent = 'speechSynthesis supported';
 
-  // ---- voices ----
-  function selectedVoice() {
-    return voices[Number($('voice').value)] || null;
-  }
+      // ---- logging ----
+      function log(msg, cls) {
+        const line = document.createElement('div');
+        if (cls) line.className = cls;
+        const t = ((performance.now() - t0) / 1000).toFixed(3).padStart(8);
+        line.textContent = `[${t}s] ${msg}`;
+        logEl.appendChild(line);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
 
-  function loadVoices() {
-    voices = synth.getVoices();
-    $('count').textContent = voices.length;
-    renderSelect();
-    renderTable();
-    renderInfo();
-    log(`voices loaded: ${voices.length}`, 'evt');
-  }
+      // ---- voices ----
+      function selectedVoice() {
+        return voices[Number($('voice').value)] || null;
+      }
 
-  function renderSelect() {
-    const f = $('filter').value.trim().toLowerCase();
-    const sel = $('voice');
-    const prev = selectedVoice();
-    sel.textContent = '';
-    voices.forEach((v, i) => {
-      if (f && !(`${v.name} ${v.lang}`.toLowerCase().includes(f))) return;
-      const o = document.createElement('option');
-      o.value = i;
-      o.textContent = `${v.name} (${v.lang})${v.default ? ' [default]' : ''}${v.localService ? '' : ' [remote]'}`;
-      sel.appendChild(o);
-    });
-    if (prev) {
-      const idx = voices.indexOf(prev);
-      if ([...sel.options].some(o => Number(o.value) === idx)) sel.value = idx;
-    }
-    renderInfo();
-  }
-
-  function renderTable() {
-    const body = $('voiceRows');
-    body.textContent = '';
-    voices.forEach((v, i) => {
-      const tr = document.createElement('tr');
-      tr.dataset.i = i;
-      [v.name, v.lang, v.localService, v.default].forEach(val => {
-        const td = document.createElement('td');
-        td.textContent = String(val);
-        tr.appendChild(td);
-      });
-      const td = document.createElement('td');
-      const b = document.createElement('button');
-      b.textContent = 'Test';
-      b.addEventListener('click', () => {
-        $('filter').value = '';
+      function loadVoices() {
+        voices = synth.getVoices();
+        $('count').textContent = voices.length;
         renderSelect();
-        $('voice').value = i;
+        renderTable();
         renderInfo();
-        speak(true);
-      });
-      td.appendChild(b);
-      tr.appendChild(td);
-      body.appendChild(tr);
-    });
-    markSelectedRow();
-  }
-
-  function markSelectedRow() {
-    const v = selectedVoice();
-    const idx = v ? voices.indexOf(v) : -1;
-    document.querySelectorAll('#voiceRows tr').forEach(tr => {
-      tr.classList.toggle('sel', Number(tr.dataset.i) === idx);
-    });
-  }
-
-  function renderInfo() {
-    const dl = $('voiceInfo');
-    dl.textContent = '';
-    const v = selectedVoice();
-    const pairs = v
-      ? [['name', v.name], ['lang', v.lang], ['voiceURI', v.voiceURI], ['localService', v.localService], ['default', v.default]]
-      : [['voice', 'none selected (browser default will be used)']];
-    pairs.forEach(([k, val]) => {
-      const dt = document.createElement('dt'); dt.textContent = k;
-      const dd = document.createElement('dd'); dd.textContent = String(val);
-      dl.append(dt, dd);
-    });
-    markSelectedRow();
-  }
-
-  // ---- speaking ----
-  function buildUtterance(textOverride, voiceOverride) {
-    const text = textOverride ?? $('text').value;
-    const u = new SpeechSynthesisUtterance(text);
-    const v = voiceOverride ?? selectedVoice();
-    if (v) u.voice = v;
-    const lang = $('lang').value.trim();
-    if (lang) u.lang = lang;
-    else if (v) u.lang = v.lang;
-    u.rate = Number($('rate').value);
-    u.pitch = Number($('pitch').value);
-    u.volume = Number($('volume').value);
-    attachEvents(u, text);
-    return u;
-  }
-
-  function attachEvents(u, text) {
-    const id = ++sequenceId;
-    const tag = `#${id}`;
-    ['start', 'end', 'pause', 'resume', 'mark'].forEach(type => {
-      u.addEventListener(type, e => {
-        log(`${tag} ${type} charIndex=${e.charIndex} elapsedTime=${e.elapsedTime?.toFixed?.(1)} name=${e.name ?? ''}`, 'evt');
-        if (type === 'end') clearFollow(text);
-      });
-    });
-    u.addEventListener('boundary', e => {
-      follow(text, e.charIndex, e.charLength);
-      if ($('logBoundary').checked) {
-        log(`${tag} boundary name=${e.name} charIndex=${e.charIndex} charLength=${e.charLength ?? 'n/a'} elapsedTime=${e.elapsedTime?.toFixed?.(1)}`);
+        log(`voices loaded: ${voices.length}`, 'evt');
       }
-    });
-    u.addEventListener('error', e => {
-      log(`${tag} error: ${e.error}`, 'err');
-      clearFollow(text);
-    });
-    log(`${tag} created: voice=${u.voice ? u.voice.name : '(default)'} lang=${u.lang || '(none)'} rate=${u.rate} pitch=${u.pitch} volume=${u.volume} chars=${text.length}`);
-  }
 
-  function speak(cancelFirst, textOverride, voiceOverride) {
-    if (cancelFirst) synth.cancel();
-    const u = buildUtterance(textOverride, voiceOverride);
-    synth.speak(u);
-    return u;
-  }
-
-  function follow(text, idx, len) {
-    const el = $('follow');
-    let end = len ? idx + len : text.indexOf(' ', idx);
-    if (end < 0) end = text.length;
-    el.textContent = '';
-    el.append(text.slice(0, idx));
-    const m = document.createElement('mark');
-    m.textContent = text.slice(idx, end);
-    el.append(m, text.slice(end));
-  }
-
-  function clearFollow(text) {
-    if (!synth.speaking || synth.pending === false && !synth.speaking) $('follow').textContent = text;
-  }
-
-  function speakEach(list, label) {
-    synth.cancel();
-    if (!list.length) { log(`${label}: no voices`, 'err'); return; }
-    log(`${label}: queueing ${list.length} utterances`, 'evt');
-    const base = $('text').value;
-    list.forEach(v => {
-      const text = `${v.name}. ${base.length > 120 ? base.slice(0, 120) : base}`;
-      const u = buildUtterance(text, v);
-      u.lang = v.lang;
-      synth.speak(u);
-    });
-  }
-
-  // ---- state polling ----
-  function setPill(el, name, on, cls) {
-    el.textContent = `${name}: ${on}`;
-    el.classList.toggle(cls, on);
-  }
-  setInterval(() => {
-    setPill($('sSpeaking'), 'speaking', synth.speaking, 'on');
-    setPill($('sPending'), 'pending', synth.pending, 'on');
-    setPill($('sPaused'), 'paused', synth.paused, 'paused');
-  }, 150);
-
-  // ---- wiring ----
-  $('speak').addEventListener('click', () => speak(true));
-  $('queue').addEventListener('click', () => speak(false));
-  $('pause').addEventListener('click', () => { synth.pause(); log('pause() called'); });
-  $('resume').addEventListener('click', () => { synth.resume(); log('resume() called'); });
-  $('cancel').addEventListener('click', () => { synth.cancel(); log('cancel() called'); });
-  $('allVoices').addEventListener('click', () => speakEach(voices, 'all voices'));
-  $('langVoices').addEventListener('click', () => {
-    const v = selectedVoice();
-    if (!v) return log('select a voice first', 'err');
-    const prefix = v.lang.split(/[-_]/)[0].toLowerCase();
-    speakEach(voices.filter(x => x.lang.toLowerCase().startsWith(prefix)), `voices for "${prefix}"`);
-  });
-
-  $('filter').addEventListener('input', renderSelect);
-  $('voice').addEventListener('change', renderInfo);
-
-  ['rate', 'pitch', 'volume'].forEach(id => {
-    $(id).addEventListener('input', () => { $(id + 'Out').textContent = $(id).value; });
-  });
-
-  document.querySelectorAll('[data-preset]').forEach(b => {
-    b.addEventListener('click', () => {
-      $('text').value = presets[b.dataset.preset];
-      $('follow').textContent = $('text').value;
-      const prefix = b.dataset.preset;
-      if (prefix !== 'long') {
-        const i = voices.findIndex(v => v.lang.toLowerCase().startsWith(prefix));
-        if (i >= 0) { $('filter').value = ''; renderSelect(); $('voice').value = i; renderInfo(); }
+      function renderSelect() {
+        const f = $('filter').value.trim().toLowerCase();
+        const sel = $('voice');
+        const prev = selectedVoice();
+        sel.textContent = '';
+        voices.forEach((v, i) => {
+          if (f && !(`${v.name} ${v.lang}`.toLowerCase().includes(f))) return;
+          const o = document.createElement('option');
+          o.value = i;
+          o.textContent = `${v.name} (${v.lang})${v.default ? ' [default]' : ''}${v.localService ? '' : ' [remote]'}`;
+          sel.appendChild(o);
+        });
+        if (prev) {
+          const idx = voices.indexOf(prev);
+          if ([...sel.options].some(o => Number(o.value) === idx)) sel.value = idx;
+        }
+        renderInfo();
       }
-    });
-  });
 
-  $('clearLog').addEventListener('click', () => { logEl.textContent = ''; t0 = performance.now(); });
-  $('copyLog').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(logEl.innerText); log('log copied'); }
-    catch (e) { log('copy failed: ' + e.message, 'err'); }
-  });
+      function renderTable() {
+        const body = $('voiceRows');
+        body.textContent = '';
+        voices.forEach((v, i) => {
+          const tr = document.createElement('tr');
+          tr.dataset.i = i;
+          [v.name, v.lang, v.localService, v.default].forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = String(val);
+            tr.appendChild(td);
+          });
+          const td = document.createElement('td');
+          const b = document.createElement('button');
+          b.textContent = 'Test';
+          b.addEventListener('click', () => {
+            $('filter').value = '';
+            renderSelect();
+            $('voice').value = i;
+            renderInfo();
+            speak(true);
+          });
+          td.appendChild(b);
+          tr.appendChild(td);
+          body.appendChild(tr);
+        });
+        markSelectedRow();
+      }
 
-  synth.addEventListener('voiceschanged', loadVoices);
-  loadVoices();
-  // Some browsers populate voices late without firing voiceschanged.
-  setTimeout(() => { if (!voices.length) loadVoices(); }, 500);
+      function markSelectedRow() {
+        const v = selectedVoice();
+        const idx = v ? voices.indexOf(v) : -1;
+        document.querySelectorAll('#voiceRows tr').forEach(tr => {
+          tr.classList.toggle('sel', Number(tr.dataset.i) === idx);
+        });
+      }
 
-  log(`userAgent: ${navigator.userAgent}`);
-  // Chrome on some platforms needs a user gesture before audio plays.
-  log('If nothing is audible, interact with the page first (autoplay policy).');
-})();
-</script>
+      function renderInfo() {
+        const dl = $('voiceInfo');
+        dl.textContent = '';
+        const v = selectedVoice();
+        const pairs = v ?
+          [
+            ['name', v.name],
+            ['lang', v.lang],
+            ['voiceURI', v.voiceURI],
+            ['localService', v.localService],
+            ['default', v.default]
+          ] :
+          [
+            ['voice', 'none selected (browser default will be used)']
+          ];
+        pairs.forEach(([k, val]) => {
+          const dt = document.createElement('dt');
+          dt.textContent = k;
+          const dd = document.createElement('dd');
+          dd.textContent = String(val);
+          dl.append(dt, dd);
+        });
+        markSelectedRow();
+      }
+
+      // ---- speaking ----
+      function buildUtterance(textOverride, voiceOverride) {
+        const text = textOverride ?? $('text').value;
+        const u = new SpeechSynthesisUtterance(text);
+        const v = voiceOverride ?? selectedVoice();
+        if (v) u.voice = v;
+        const lang = $('lang').value.trim();
+        if (lang) u.lang = lang;
+        else if (v) u.lang = v.lang;
+        u.rate = Number($('rate').value);
+        u.pitch = Number($('pitch').value);
+        u.volume = Number($('volume').value);
+        attachEvents(u, text);
+        return u;
+      }
+
+      function attachEvents(u, text) {
+        const id = ++sequenceId;
+        const tag = `#${id}`;
+        ['start', 'end', 'pause', 'resume', 'mark'].forEach(type => {
+          u.addEventListener(type, e => {
+            log(`${tag} ${type} charIndex=${e.charIndex} elapsedTime=${e.elapsedTime?.toFixed?.(1)} name=${e.name ?? ''}`, 'evt');
+            if (type === 'end') clearFollow(text);
+          });
+        });
+        u.addEventListener('boundary', e => {
+          follow(text, e.charIndex, e.charLength);
+          if ($('logBoundary').checked) {
+            log(`${tag} boundary name=${e.name} charIndex=${e.charIndex} charLength=${e.charLength ?? 'n/a'} elapsedTime=${e.elapsedTime?.toFixed?.(1)}`);
+          }
+        });
+        u.addEventListener('error', e => {
+          log(`${tag} error: ${e.error}`, 'err');
+          clearFollow(text);
+        });
+        log(`${tag} created: voice=${u.voice ? u.voice.name : '(default)'} lang=${u.lang || '(none)'} rate=${u.rate} pitch=${u.pitch} volume=${u.volume} chars=${text.length}`);
+      }
+
+      function speak(cancelFirst, textOverride, voiceOverride) {
+        if (cancelFirst) synth.cancel();
+        const u = buildUtterance(textOverride, voiceOverride);
+        synth.speak(u);
+        return u;
+      }
+
+      function follow(text, idx, len) {
+        const el = $('follow');
+        let end = len ? idx + len : text.indexOf(' ', idx);
+        if (end < 0) end = text.length;
+        el.textContent = '';
+        el.append(text.slice(0, idx));
+        const m = document.createElement('mark');
+        m.textContent = text.slice(idx, end);
+        el.append(m, text.slice(end));
+      }
+
+      function clearFollow(text) {
+        if (!synth.speaking || synth.pending === false && !synth.speaking) $('follow').textContent = text;
+      }
+
+      function speakEach(list, label) {
+        synth.cancel();
+        if (!list.length) {
+          log(`${label}: no voices`, 'err');
+          return;
+        }
+        log(`${label}: queueing ${list.length} utterances`, 'evt');
+        const base = $('text').value;
+        list.forEach(v => {
+          const text = `${v.name}. ${base.length > 120 ? base.slice(0, 120) : base}`;
+          const u = buildUtterance(text, v);
+          u.lang = v.lang;
+          synth.speak(u);
+        });
+      }
+
+      // ---- state polling ----
+      function setPill(el, name, on, cls) {
+        el.textContent = `${name}: ${on}`;
+        el.classList.toggle(cls, on);
+      }
+      setInterval(() => {
+        setPill($('sSpeaking'), 'speaking', synth.speaking, 'on');
+        setPill($('sPending'), 'pending', synth.pending, 'on');
+        setPill($('sPaused'), 'paused', synth.paused, 'paused');
+      }, 150);
+
+      // ---- wiring ----
+      $('speak').addEventListener('click', () => speak(true));
+      $('queue').addEventListener('click', () => speak(false));
+      $('pause').addEventListener('click', () => {
+        synth.pause();
+        log('pause() called');
+      });
+      $('resume').addEventListener('click', () => {
+        synth.resume();
+        log('resume() called');
+      });
+      $('cancel').addEventListener('click', () => {
+        synth.cancel();
+        log('cancel() called');
+      });
+      $('allVoices').addEventListener('click', () => speakEach(voices, 'all voices'));
+      $('langVoices').addEventListener('click', () => {
+        const v = selectedVoice();
+        if (!v) return log('select a voice first', 'err');
+        const prefix = v.lang.split(/[-_]/)[0].toLowerCase();
+        speakEach(voices.filter(x => x.lang.toLowerCase().startsWith(prefix)), `voices for "${prefix}"`);
+      });
+
+      $('filter').addEventListener('input', renderSelect);
+      $('voice').addEventListener('change', renderInfo);
+
+      ['rate', 'pitch', 'volume'].forEach(id => {
+        $(id).addEventListener('input', () => {
+          $(id + 'Out').textContent = $(id).value;
+        });
+      });
+
+      document.querySelectorAll('[data-preset]').forEach(b => {
+        b.addEventListener('click', () => {
+          $('text').value = presets[b.dataset.preset];
+          $('follow').textContent = $('text').value;
+          const prefix = b.dataset.preset;
+          if (prefix !== 'long') {
+            const i = voices.findIndex(v => v.lang.toLowerCase().startsWith(prefix));
+            if (i >= 0) {
+              $('filter').value = '';
+              renderSelect();
+              $('voice').value = i;
+              renderInfo();
+            }
+          }
+        });
+      });
+
+      $('clearLog').addEventListener('click', () => {
+        logEl.textContent = '';
+        t0 = performance.now();
+      });
+      $('copyLog').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(logEl.innerText);
+          log('log copied');
+        } catch (e) {
+          log('copy failed: ' + e.message, 'err');
+        }
+      });
+
+      synth.addEventListener('voiceschanged', loadVoices);
+      loadVoices();
+      // Some browsers populate voices late without firing voiceschanged.
+      setTimeout(() => {
+        if (!voices.length) loadVoices();
+      }, 500);
+
+      log(`userAgent: ${navigator.userAgent}`);
+      // Chrome on some platforms needs a user gesture before audio plays.
+      log('If nothing is audible, interact with the page first (autoplay policy).');
+    })();
+
+  </script>
 </body>
+
 </html>
